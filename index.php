@@ -37,7 +37,7 @@
         <div class="table-container">
             <div class="table-header">
                 <div class="table-title">user lists</div>   
-                <button id="add_user" class="btn rounded-pill add-user px-4" data-bs-toggle="modal" data-bs-target="#user_modal">
+                <button id="add_user" class="btn rounded-pill add-user px-4">
                     Add User
                 </button>
             </div>
@@ -60,7 +60,7 @@
     </div>
     <!-- / Main -->
 
-    <!-- Add User Modal -->
+    <!-- User Form -->
     <div class="modal fade zoom-in" id="user_modal" data-bs-keyboard="false" data-bs-backdrop="static">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -69,7 +69,12 @@
                     <button type="button" class="close-modal border-0 bg-transparent" data-bs-dismiss="modal"><i class="fal fa-times text-white"></i></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addUser">
+                    <form id="formData">
+                        <div id="avatarMain" class="form-group mb-4 text-center ">
+                            <span class="avatar-container">
+                                <img alt="" id="avatar_photo" class="avatar">
+                            </span>
+                        </div>
                         <div class="form-group mb-3">
                             <label>First Name</label>
                             <input type="text" name="first_name" id="firstname" class="form-control text-capitalize">
@@ -83,58 +88,26 @@
                             <input type="email" name="email" id="email" class="form-control">
                             <span id="emailError" class="d-block"></span>
                         </div>
-                        <div class="form-group mb-4">
+                        <div class="form-group mb-4 file-container">
                             <label class="d-block mb-2">Upload Avatar</label>
-                            <input type="file" name="file" class="form-control-file w-100" id="file">
+                            <input type="file" name="file" class="form-control w-100" id="file">
                         </div>
+                        <input type="hidden" id="id" name="id">
+                        <input type="hidden" id="action" name="action" >
                         <button id="submitUser" class="btn bg-blue w-100 mb-2">Submit</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-     <!-- / Add User Model -->
-
-    <!-- View User Modal -->
-    <div class="modal fade" id="user_view_modal" data-bs-keyboard="false" data-bs-backdrop="static">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-success">
-                    <h5 class="modal-title"><i class="fal fa-eye"></i></h5>
-                    <button type="button" class="close-modal border-0 bg-transparent" data-bs-dismiss="modal"><i class="fal fa-times text-white"></i></button>
-                </div>
-                <div class="modal-body">
-                    <div id="addUser">
-                        <div class="form-group mb-4 text-center ">
-                            <span class="avatar-container">
-                             <img alt="" id="avatar_photo" class="avatar">
-                            </span>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label>First Name</label>
-                            <input type="text" id="v_firstname" class="form-control text-capitalize">
-                        </div>
-                        <div class="form-group mb-3">
-                            <label>Last Name</label>
-                            <input type="text" id="v_lastname" class="form-control text-capitalize">
-                        </div>
-                        <div class="form-group mb-4">
-                            <label>Email Address</label>
-                            <input type="email" id="v_email" class="form-control">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- / View Modal -->
+    <!-- / User Form -->
 
     <!-- Toast Notification -->
     <div class="toast-notification rounded" > 
         <i class="fas fa-check-circle text-white"></i></i>
         <div class="toast-message">
             <span>Success!</span>
-            User has been added successfully.
+            <span class="message"></span>
         </div>
         <div class="toast-close"><i class="fal fa-times"></i></div>
     </div>

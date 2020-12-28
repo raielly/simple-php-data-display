@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
     // Datatable display all users.
-    $('#user_table').DataTable({
+    var userTable = $('#user_table').DataTable({
         "ajax": "fetch_user.php",
         "columns": [
             { "data": "id" },
@@ -38,7 +38,7 @@ $(document).ready(function() {
 
 
     // Form Validation.
-    $('#addUser').validate({
+    var validator = $('#formData').validate({
 
         rules: {
             first_name: {
@@ -68,7 +68,13 @@ $(document).ready(function() {
             }
         },
         submitHandler: function() {
-            addUser();
+
+            if( $('#action').val() == 'add' ) {
+
+                addUser();
+
+            } 
+
         }
 
     });
@@ -76,153 +82,160 @@ $(document).ready(function() {
 
     // Add User.
     function addUser() {
+
+        var fd = new FormData( $('#formData')[0] );
     
-        var fileUpload = uploadAvatar();
-        var firstName = $('#firstname'),
-            lastName = $('#lastname'),
-            email = $('#email');
-
-        var data = {
-            first_name: firstName.val(),
-            last_name: lastName.val(),
-            email: email.val(),
-            file: fileUpload
-        }
-
         $.ajax({
             type: 'POST',
             url: 'insert_user.php',
-            data: data,
+            data: fd,
             dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
             success: function( response ) {
+
+                console.log( response.status );
 
                 // Check if email is exists.
                 if ( response.status == "fail" ) {
 
+                    // Show Error if email already exists.
                     $('#emailError').text('Email Address is Already Registered');
 
                 } else {
 
-                    $('.toast-notification').show();
-
-                    setTimeout(function() { 
-                        $('.toast-notification').fadeOut();
-                    }, 3000);
-                
                     // Hide modal when process complete.
                     $('#user_modal').modal('hide');
 
                     // Refresh dataTable.
-                    var table = $('#user_table').DataTable();
-                    table.ajax.reload();
+                    userTable.ajax.reload();
+
+                    // Show Success Notification.
+                    $('.toast-notification').show();
+                    $('.message').text('User successfully added!');
+
+                    // Hide after 3 seconds.
+                    setTimeout(function() { 
+                        $('.toast-notification').fadeOut();
+                    }, 3000);
+                
 
                 }
 
             },
             error: function( xhr ) {
-                console.log( xhr.statusText + "\r\n" + xhr.responseText);
+
+                console.log( xhr.responseText );
+
             }
 
         });
 
     }
 
-    // File Upload.
-    function uploadAvatar() {
-      
-        var file_data = $('#file').prop('files')[0];   
+    // Add User on Click
+    $('#add_user').on('click', function () {
 
-        if( typeof file_data != 'undefined' ) {
+        $('#user_modal').modal('show');
 
-            var form_data = new FormData();         
-            form_data.append('file', file_data);
+        // Reset Form Fields
+        $('#formData')[0].reset();
+        
+        // Reset Validator
+        validator.resetForm();
+        
+        // Remove Error Form Style
+        $('.form-control').removeClass('error');
 
-            $.ajax({
-                async: false,
-                type: 'POST',
-                url: 'upload.php',
-                data: form_data,
-                dataType: 'text',
-                contentType:false,
-                processData: false,
-                success: function( response ) {
-                    avatarName = response;
-                },
-                error: function( xhr ) {
-                    console.log( xhr.statusText + "\r\n" + xhr.responseText);
-                }
-            });
+        // Remove Email Error Style
+        $('#emailError').text('');
 
-        } else {
+        // Hide avatar
+        $('#avatarMain').hide();
 
-            // Set Default if image is empty.
-            avatarName = 'no-image.png';
+        // Remove Update Class
+        $('#user_modal').removeClass('update-user');
 
-        }
+        // Remove Update Class
+        $('#user_modal').removeClass('update-user');
 
-        return avatarName;
+        // disable input fields.
+        $('#user_modal').find('.form-control').removeAttr('disabled');
 
-    }
+        // Change icon to add
+        $('#user_modal').find('.modal-title .fal').addClass('fa-user-plus');
+
+        // Hide File Upload.
+        $('.file-container').show();
+
+        // Hide File Upload.
+        $('#submitUser').show();
+
+        var action = $('#action').val('add');
+       
+    });
 
 
-    // View Users.
+    // View Form.
     $('#user_table').on('click', '.viewBtn', function() { 
  
         // Get User ID by data attribute.
-        var $user_id = $(this).data('id');
+        var user_id = $(this).data('id');
 
-        // Fetch Users Data.
+        //Fetch Users Data.
         $.ajax({
             type: 'POST',
             url: 'fetch_user.php',
-            data: { id: $user_id },
+            data: { id: user_id },
             dataType: 'json',
             success: function( response ) {
 
                 // Passing response value to the modal input fields.
-                $('#v_firstname').val(response.first_name);
-                $('#v_lastname').val(response.last_name);
-                $('#v_email').val(response.email);
+                $('#id').val(response.id);
+                $('#firstname').val(response.first_name);
+                $('#lastname').val(response.last_name);
+                $('#email').val(response.email);
                 $('#avatar_photo').attr('src', 'upload/'+response.avatar);
 
-                // Show Modal on Click.
-                $('#user_view_modal').modal('show');
             }
         });
 
-        // disable input fields.
-        $('#user_view_modal').find('.form-control').attr('disabled', true);
+        // Show Modal on Click.
+        $('#user_modal').modal('show');
 
-    });
+        // Reset Validator
+        validator.resetForm();
+        
+        // Remove Error Form Style
+        $('.form-control').removeClass('error');
 
-    // Clear Fields when add button is closed.
-    $('#add_user').on('click', function () {
+        // Show Avatar.
+        $('#avatarMain').show();
 
-        // Input Fields
-        $('#firstname').val('');
-        $('#lastname').val('');
-        $('#email').val('');
-        $('#file').val(null);
+        // Add Update Class.
+        $('#user_modal').addClass('update-user');
+            
+        // Reset File Upload.
+        $('#file').val('');
+
+        // Hide File Upload.
+        $('.file-container').hide();
+
+        // Hide File Upload.
+        $('#submitUser').hide();
+
+        // Remove Email Error Text
         $('#emailError').text('');
 
-        // Enable Fields
-        $('#user_modal').find('.form-control').attr('disabled', false);
-       
-    })
+        // disable input fields.
+        $('.update-user').find('.form-control').attr('disabled', true);   
 
-    // Destroy Validation
-    $('#user_modal').on('hidden.bs.modal', function () {
+        // Change icon to add
+        $('#user_modal').find('.modal-title .fal').removeClass('fa-user-plus').addClass('fa-eye');
 
-        // Get User Table
-        var validator = $( "#user_modal" ).validate();
-        validator.destroy();
 
-        // Remove Validation Styles
-        $('#user_modal').find('.form-control').removeClass('error');
-        $('#user_modal').find('.form-control').removeClass('valid');
- 
-
-    })
+    });
 
     // Success Button.
     $('.toast-close').on('click', function() {

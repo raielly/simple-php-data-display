@@ -258,23 +258,23 @@ button:focus,
     -webkit-transform: translate(0,0);
     transform: translate(0,0);
 }
+
+.update-user #submitUser,
+.update-user .modal-header {
+    background-color: #198754;
+}
+
   
 /* end modal */
 
 /* input fields notification */
 
-
 .error {
     color: red;
-    
 }
 
 .form-control.error {
     border-color: red;
-}
-
-.form-control.valid {
-    border-color: green;
 }
 
 #emailError {
@@ -306,18 +306,18 @@ button:focus,
 
 @-webkit-keyframes slideInLeft {
     0% {
-        transform: translateX(-800px);
+        transform: translateX(-1500px);
     }
  
 }
 @-moz-keyframes slideInLeft {
     0% {
-        transform: translateX(-800px);
+        transform: translateX(-1500px);
     } 
 }
 @keyframes slideInLeft {
     0% {
-        transform: translateX(-800px);
+        transform: translateX(-1500px);
     } 
 }
 
@@ -326,10 +326,15 @@ button:focus,
     color: #fff;
 }
 
-.toast-message span {
+.toast-message {
     font-weight: bold;
-    display: block;
     font-size: 16px;
+}
+
+.toast-message .message {
+    font-size: 16px;
+    font-weight: normal;
+    display: block;
 }
 
 .toast-notification .fa-check-circle {

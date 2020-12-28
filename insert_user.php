@@ -5,7 +5,7 @@
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
     $email = $_POST['email'];
-    $file = $_POST['file'];
+    $file = $_FILES['file'];
 
     $query = "SELECT * FROM users WHERE email = '". $email ."'  ";
     $result = mysqli_query( $conn, $query );
@@ -17,12 +17,27 @@
 
     } else {
 
-        $query = mysqli_query ($conn, 'INSERT INTO users (avatar, first_name, last_name, email) VALUES ("'. $file .'", "'. $first_name .'", "'. $last_name .'", "'. $email .'") ') or die( mysqli_error( $conn ) );
+        $defaultImg = 'no-image.png';
+
+        if( $file['name'] != "" ) {
+
+            $tmp = explode('.', $file['name']);
+            $ext = end( $tmp );
+            $defaultImg = 'avatar' . rand(000,999) . '.' . $ext;
+
+        }
+
+        $location = 'upload/' . $defaultImg;
+
+        move_uploaded_file( $file['tmp_name'], $location );
+
+        $query = mysqli_query ($conn, 'INSERT INTO users (avatar, first_name, last_name, email) VALUES ("'. $defaultImg .'", "'. $first_name .'", "'. $last_name .'", "'. $email .'") ') or die( mysqli_error( $conn ) );
 
         echo json_encode( array( "status"=> "success" ) );
  
 
     }
+
 
 
 ?>
